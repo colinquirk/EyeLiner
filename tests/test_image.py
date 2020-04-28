@@ -1,3 +1,4 @@
+import glob
 import os
 import unittest
 
@@ -5,6 +6,10 @@ import eyeliner
 
 
 class TestImage(unittest.TestCase):
+
+    def tearDown(self):
+        for f in glob.glob('*.png'):
+            os.remove(f)
 
     def test_image_creation(self):
         img = eyeliner.Image()
@@ -54,29 +59,17 @@ class TestImage(unittest.TestCase):
             img.draw({'test': 100})
 
     def test_image_output(self):
-        fname = 'test.png'
-        try:
-            os.remove(fname)
-        except FileNotFoundError:
-            pass
-
         img = eyeliner.Image()
         points = [(960, 540), (20, 20), (20, 1060), (1900, 1060), (1900, 20), (960, 540)]
         img.draw(points)
-        img.write(fname)
+        img.write('test.png')
 
-        self.assertTrue(os.path.exists(fname))
+        self.assertTrue(os.path.exists('test.png'))
 
     def test_color_image_output(self):
-        fname = 'test_color.png'
-        try:
-            os.remove(fname)
-        except FileNotFoundError:
-            pass
-
         img = eyeliner.Image()
         points = [(960, 540), (20, 20), (20, 1060), (1900, 1060), (1900, 20), (960, 540)]
         img.draw(points, color=True)
-        img.write(fname)
+        img.write('test_color.png')
 
-        self.assertTrue(os.path.exists(fname))
+        self.assertTrue(os.path.exists('test_color.png'))
