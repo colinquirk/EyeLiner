@@ -30,7 +30,7 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
 
 
 def make_images_from_df(df, group_columns, x_col='x', y_col='y', chunk=None, keep_last_chunk=True,
-                        base_path=None):
+                        base_path='.'):
     groups = df.groupby(group_columns)
     groups.apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col,
                  chunk=chunk, keep_last_chunk=keep_last_chunk, base_path=base_path)
