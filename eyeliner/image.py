@@ -10,7 +10,7 @@ class Image():
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, screen_width, screen_height)
+        self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, out_size, out_size)
         self.context = cairo.Context(self.surface)
 
         self._setup_context()
@@ -31,6 +31,7 @@ class Image():
 
         divisions = color_value // 256
         remainder = color_value % 256
+        color = (0.0, 0.0, 0.0)
 
         if divisions == 0:
             color = ((255 - remainder) / 256, remainder / 256, 0)
