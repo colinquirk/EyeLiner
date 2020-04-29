@@ -5,7 +5,7 @@ import os
 import eyeliner.image
 
 
-def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path):
+def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path, color, **kwargs):
     group_values = [str(int(i)) for i in list(d[group_columns].iloc[0])]
     points = list(zip(d[x_col], d[y_col]))
 
@@ -19,7 +19,7 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
                 continue
 
             chunk_points = points[chunk_start:chunk_end]
-            img = eyeliner.image.Image()
+            img = eyeliner.image.Image(**kwargs)
             img.draw(chunk_points, color=True)
             img.write(os.path.join(base_path, fname))
     else:
@@ -29,8 +29,8 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
         img.write(os.path.join(base_path, fname))
 
 
-def make_images_from_df(df, group_columns, x_col='x', y_col='y', chunk=None, keep_last_chunk=True,
-                        base_path='.'):
+def make_images_from_df(df, group_columns, x_col='x', y_col='y', color=True, chunk=None,
+                        keep_last_chunk=True, base_path='.', **kwargs):
     groups = df.groupby(group_columns)
-    groups.apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col,
-                 chunk=chunk, keep_last_chunk=keep_last_chunk, base_path=base_path)
+    groups.apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col, color=color,
+                 chunk=chunk, keep_last_chunk=keep_last_chunk, base_path=base_path, **kwargs)
