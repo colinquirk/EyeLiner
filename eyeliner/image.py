@@ -44,7 +44,7 @@ class Image():
         try:
             points[0][1]
         except (TypeError, KeyError, IndexError):
-            raise(TypeError('Points should be a list of legnth 2 (x,y) tuples.'))
+            raise(TypeError('Points should be a list of length 2 (x,y) tuples.'))
 
         if len(points[0]) != 2:
             raise(TypeError('Length of each point (x,y) must be equal to 2.'))
