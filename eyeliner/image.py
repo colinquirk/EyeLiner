@@ -5,10 +5,11 @@ import cairo
 
 
 class Image():
-    def __init__(self, out_size=224, screen_width=1920, screen_height=1080):
+    def __init__(self, out_size=224, screen_width=1920, screen_height=1080, zoom=1):
         self.out_size = out_size
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.zoom = zoom
 
         self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, out_size, out_size)
         self.context = cairo.Context(self.surface)
@@ -40,6 +41,18 @@ class Image():
 
         return color
 
+    def _zoom(self, points):
+        center = (self.screen_width / 2, self.screen_height / 2)
+        print(center)
+        zeroed = [(x - center[0], y - center[1]) for x, y in points]
+        print(zeroed[0])
+        zoomed_zeroed = [(x * self.zoom, y * self.zoom) for x, y in zeroed]
+        print(zoomed_zeroed[0])
+        zoomed = [(x + center[0], y + center[1]) for x, y in zoomed_zeroed]
+        print(zoomed[0])
+
+        return zoomed
+
     def draw(self, points, color=False):
         try:
             points[0][1]
@@ -48,6 +61,12 @@ class Image():
 
         if len(points[0]) != 2:
             raise(TypeError('Length of each point (x,y) must be equal to 2.'))
+
+        print('draw')
+        print(points[0])
+        points = self._zoom(points)
+        print(points[0])
+        print('done')
 
         self.context.set_line_width(10)
         self.context.move_to(points[0][0], points[0][1])
