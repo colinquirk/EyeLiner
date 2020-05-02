@@ -33,11 +33,12 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
 
 
 def make_images_from_df(df, group_columns, x_col='x', y_col='y', color=False, chunk=None,
-                        keep_last_chunk=True, base_path='.', parallel=False, **kwargs):
+                        keep_last_chunk=True, base_path='.', parallel=False, nb_workers=1,
+                        **kwargs):
     groups = df.groupby(group_columns)
 
     if parallel:
-        pandarallel.initialize()
+        pandarallel.initialize(nb_workers=nb_workers)
         groups.parallel_apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col,
                               color=color, chunk=chunk, keep_last_chunk=keep_last_chunk,
                               base_path=base_path, **kwargs)
