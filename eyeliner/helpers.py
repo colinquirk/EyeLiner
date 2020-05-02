@@ -2,6 +2,8 @@
 """
 import os
 
+from pandarallel import pandarallel
+
 import eyeliner.image
 
 
@@ -31,7 +33,15 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
 
 
 def make_images_from_df(df, group_columns, x_col='x', y_col='y', color=False, chunk=None,
-                        keep_last_chunk=True, base_path='.', **kwargs):
+                        keep_last_chunk=True, base_path='.', parallel=False, **kwargs):
     groups = df.groupby(group_columns)
-    groups.apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col, color=color,
-                 chunk=chunk, keep_last_chunk=keep_last_chunk, base_path=base_path, **kwargs)
+
+    if parallel:
+        pandarallel.initialize()
+        groups.parallel_apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col,
+                              color=color, chunk=chunk, keep_last_chunk=keep_last_chunk,
+                              base_path=base_path, **kwargs)
+    else:
+        groups.apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col,
+                     color=color, chunk=chunk, keep_last_chunk=keep_last_chunk,
+                     base_path=base_path, **kwargs)
