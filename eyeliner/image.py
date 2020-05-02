@@ -50,7 +50,9 @@ class Image():
         ax.set_ylim(y_zoom_offset, self.screen_height - y_zoom_offset)
 
         if color:
-            pass
+            for i, p in enumerate(points[1:]):
+                color = self._calculate_color(i, len(points))
+                ax.plot((points[i][0], p[0]), (points[i][1], p[1]), color=color)
         else:
             ax.plot(*zip(*points), color="black")
 
