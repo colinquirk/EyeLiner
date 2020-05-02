@@ -13,12 +13,10 @@ class TestImage(unittest.TestCase):
 
     def test_image_creation(self):
         img = eyeliner.Image()
-        self.assertEqual(img.out_size, 224)
         self.assertEqual(img.screen_width, 1920)
         self.assertEqual(img.screen_height, 1080)
 
-        img2 = eyeliner.Image(out_size=500, screen_width=1600, screen_height=1200)
-        self.assertEqual(img2.out_size, 500)
+        img2 = eyeliner.Image(screen_width=1600, screen_height=1200)
         self.assertEqual(img2.screen_width, 1600)
         self.assertEqual(img2.screen_height, 1200)
 

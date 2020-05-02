@@ -20,13 +20,14 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
 
             chunk_points = points[chunk_start:chunk_end]
             img = eyeliner.image.Image(**kwargs)
-            img.draw(chunk_points, color=True)
+            img.draw(chunk_points, color=color)
             img.write(os.path.join(base_path, fname))
     else:
         fname = '_'.join(group_values) + '.png'
         img = eyeliner.image.Image(**kwargs)
-        img.draw(points, color=True)
+        img.draw(points, color=color)
         img.write(os.path.join(base_path, fname))
+        img.close()
 
 
 def make_images_from_df(df, group_columns, x_col='x', y_col='y', color=False, chunk=None,

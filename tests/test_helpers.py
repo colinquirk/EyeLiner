@@ -19,7 +19,7 @@ class TestHelpers(unittest.TestCase):
         df = pd.read_csv('tests/data/test.csv')
 
         eyeliner.make_image(df, ['subject', 'trial'], 'x', 'y', chunk=None, keep_last_chunk=False,
-                            base_path='.')
+                            base_path='.', color=False)
 
         self.assertTrue(os.path.exists(fname))
 
