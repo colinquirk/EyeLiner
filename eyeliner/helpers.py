@@ -24,6 +24,7 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
             img = eyeliner.image.Image(**kwargs)
             img.draw(chunk_points, color=color)
             img.write(os.path.join(base_path, fname))
+            img.close()
     else:
         fname = '_'.join(group_values) + '.png'
         img = eyeliner.image.Image(**kwargs)
