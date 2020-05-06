@@ -6,31 +6,35 @@ import matplotlib.pyplot as plt
 
 class Image():
     def __init__(self, screen_width=1920, screen_height=1080, zoom=0):
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-
         if zoom <= -0.5 or zoom >= 0.5:
             raise ValueError('zoom must be greater than -0.5 and less than 0.5')
 
         self.zoom = zoom
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+
+        self.colors = [
+            [1, 0, 0],
+            [1, 1, 0],
+            [0, 1, 0],
+            [0, 1, 1],
+            [0, 0, 1]
+        ]
 
         self.fig = None
 
     @staticmethod
-    def _calculate_color(i, length):
-        proportion = i / length
-        color_value = round(proportion * (256 * 2))  # number of possible colors
+    def get_chunks(points):
+        points_per_chunk = len(points) // 5
 
-        divisions = color_value // 256
-        remainder = color_value % 256
-        color = (0.0, 0.0, 0.0)
+        point_chunks = []
+        for i in range(5):
+            if i == 4:
+                point_chunks.append(points[i * points_per_chunk:])
+            else:
+                point_chunks.append(points[i * points_per_chunk:i * points_per_chunk + points_per_chunk])
 
-        if divisions == 0:
-            color = ((255 - remainder) / 256, remainder / 256, 0)
-        elif divisions == 1:
-            color = (0, (255 - remainder) / 256, remainder / 256)
-
-        return color
+        return point_chunks
 
     def draw(self, points, color=False):
         try:
@@ -50,9 +54,9 @@ class Image():
         ax.set_ylim(y_zoom_offset, self.screen_height - y_zoom_offset)
 
         if color:
-            for i, p in enumerate(points[1:]):
-                color = self._calculate_color(i, len(points))
-                ax.plot((points[i][0], p[0]), (points[i][1], p[1]), color=color)
+            point_chunks = self.get_chunks(points)
+            for i, p in enumerate(point_chunks):
+                ax.plot(*zip(*p), color=self.colors[i])
         else:
             ax.plot(*zip(*points), color="black")
 
