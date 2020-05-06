@@ -60,4 +60,5 @@ class Image():
         self.fig.savefig(filename)
 
     def close(self):
+        self.fig.clear()
         plt.close(self.fig)

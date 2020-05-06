@@ -1,5 +1,6 @@
 """Docstring
 """
+import gc
 import os
 
 from pandarallel import pandarallel
@@ -25,18 +26,23 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
             img.draw(chunk_points, color=color)
             img.write(os.path.join(base_path, fname))
             img.close()
+            del img
+            gc.collect()
     else:
         fname = '_'.join(group_values) + '.png'
         img = eyeliner.image.Image(**kwargs)
         img.draw(points, color=color)
         img.write(os.path.join(base_path, fname))
         img.close()
+        del img
+        gc.collect()
 
 
 def make_images_from_df(df, group_columns, x_col='x', y_col='y', color=False, chunk=None,
                         keep_last_chunk=True, base_path='.', parallel=False, nb_workers=1,
                         **kwargs):
-    groups = df.groupby(group_columns)
+    df[group_columns] = df[group_columns].astype('category')
+    groups = df.groupby(group_columns, observed=True)
 
     if parallel:
         pandarallel.initialize(nb_workers=nb_workers)
