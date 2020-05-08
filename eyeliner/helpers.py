@@ -1,9 +1,8 @@
 """Docstring
 """
-import gc
 import os
 
-from pandarallel import pandarallel
+import dask.dataframe as dd
 
 import eyeliner.image
 
@@ -27,7 +26,6 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
             img.write(os.path.join(base_path, fname))
             img.close()
             del img
-            gc.collect()
     else:
         fname = '_'.join(group_values) + '.png'
         img = eyeliner.image.Image(**kwargs)
@@ -35,21 +33,12 @@ def make_image(d, group_columns, x_col, y_col, chunk, keep_last_chunk, base_path
         img.write(os.path.join(base_path, fname))
         img.close()
         del img
-        gc.collect()
 
 
 def make_images_from_df(df, group_columns, x_col='x', y_col='y', color=False, chunk=None,
-                        keep_last_chunk=True, base_path='.', parallel=False, nb_workers=1,
-                        **kwargs):
-    df[group_columns] = df[group_columns].astype('category')
-    groups = df.groupby(group_columns, observed=True)
+                        keep_last_chunk=True, base_path='.', num_workers=1, **kwargs):
 
-    if parallel:
-        pandarallel.initialize(nb_workers=nb_workers)
-        groups.parallel_apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col,
-                              color=color, chunk=chunk, keep_last_chunk=keep_last_chunk,
-                              base_path=base_path, **kwargs)
-    else:
-        groups.apply(make_image, group_columns=group_columns, x_col=x_col, y_col=y_col,
-                     color=color, chunk=chunk, keep_last_chunk=keep_last_chunk,
-                     base_path=base_path, **kwargs)
+    df.groupby(group_columns).apply(
+        make_image, group_columns=group_columns, x_col=x_col, y_col=y_col, color=color,
+        chunk=chunk, keep_last_chunk=keep_last_chunk, base_path=base_path,
+        meta={x_col: 'f8', y_col: 'f8'}, **kwargs).compute(num_workers=num_workers)
